@@ -91,7 +91,7 @@ export SERPAPI_KEY="your_api_key"
 ### ▶️ Run the Application
 
 ```bash
-streamlit run app.py
+streamlit run main_app.py
 ```
 
 You will be prompted to choose either:

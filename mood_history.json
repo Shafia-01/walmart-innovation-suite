@@ -259,5 +259,23 @@
         "interest": "Fashion",
         "age": 20,
         "gender": "Female"
+    },
+    {
+        "timestamp": "2025-09-13 19:52:26",
+        "mood": "joy",
+        "category": "toys",
+        "adjusted_category": "collectibles or hobby kits for adults",
+        "interest": "General",
+        "age": 25,
+        "gender": "Prefer not to say"
+    },
+    {
+        "timestamp": "2025-09-13 20:10:27",
+        "mood": "joy",
+        "category": "toys",
+        "adjusted_category": "collectibles or hobby kits for adults",
+        "interest": "General",
+        "age": 25,
+        "gender": "Prefer not to say"
     }
 ]

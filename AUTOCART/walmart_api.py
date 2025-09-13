@@ -1,20 +1,19 @@
 import requests
 import os
 from dotenv import load_dotenv
-
-load_dotenv()  # Loads variables from a .env file
-API_KEY = os.getenv("SERPAPI_KEY")
+load_dotenv()  
+SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 BASE_URL = "https://serpapi.com/search.json"
 
 def fetch_trending_products(query, num_results=5):
-    if not API_KEY:
+    if not SERPAPI_KEY:
         print("❌ API key not set")
         return []
 
     params = {
         "engine": "walmart",
         "query": query,
-        "api_key": API_KEY
+        "api_key": SERPAPI_KEY
     }
 
     response = requests.get(BASE_URL, params=params)
