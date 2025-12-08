@@ -1,157 +1,121 @@
 
-# 🛒 FeelCart – Shop What You Feel
+# FeelCart – Shop What You Feel
 
-**An AI-Powered shopping assistant that personalizes Walmart shopping using real-time mood detection and smart cart automation**
+FeelCart is a Streamlit-powered shopping assistant that personalizes Walmart product discovery in two ways:
+- 🧠 **MoodCart**: turns what you feel into product categories and recommends items that fit your mood.
+- 🤖 **AutoCart**: mines past shopping behavior to suggest refills and trending alternatives automatically.
 
-FeelCart is an intelligent, dual-module shopping system that enhances user experience by combining two independent yet powerful features:
-
-- 🧠 **MoodCart**: Recommends products based on how you feel using mood classification and sentiment-aware mapping.
-- 🤖 **AutoCart**: Automatically fills your cart with frequently bought, trending, or refill-needed items based on past user behavior and smart logic.
-
-Together, these modules redefine shopping personalization — one based on **emotions**, and the other based on **habits**.
+Both modules can run on their own or through the combined `main_app.py` experience.
 
 ---
 
-## 🌟 Key Modules
-
-### 🧠 MoodCart – Shop by Emotion
-- Detects the user's mood using Natural Language Processing.
-- Maps mood to relevant product categories (e.g., *happy → party supplies*).
-- Fetches product recommendations in real time using Walmart’s SerpAPI.
-- Stores user mood history and visualizes mood trends over time.
-
-### 🤖 AutoCart – Shop by Behavior
-- Analyzes past user purchases and refill patterns.
-- Identifies top-used or trending items based on frequency and category.
-- Automatically fills a smart cart with personalized essentials.
-- Encourages sustainable shopping with refill reminders and item prioritization.
-
-> 💡 Both modules work **independently** and can be used based on user preference.
-
----
-
-## 💼 Use Cases
-
-- 😌 **Emotion Shopping**: Feeling sad? Get suggestions for comfort items like snacks, candles, or books.
-- ⏰ **Routine Shopping**: Low on groceries? AutoCart identifies what you need and adds it to your cart.
-- 📈 **Mood Insights**: Visualize how your moods change over time and how they influence your shopping behavior.
-
----
-
-## 🛠️ Tech Stack
-
-| Component         | Tools / Libraries                               |
-|------------------ |-------------------------------------------------|
-| Frontend UI       | Streamlit                                       |
-| ML/NLP            | Hugging Face Transformers, joblib               |
-| Backend           | Python, Pandas, Requests, JSON, MySQL           |
-| Data Source       | Walmart Product Search (via SerpAPI)            |
-| Visualization     | Plotly Express                                  |
-| Deployment Ready  | Local + WebApp with API modularity              |
-
----
-
-## 📁 Project Structure
+## What’s inside
 
 ```
-FeelCart-ShopWhatYouFeel/
-├── main_app.py                   # Main Streamlit interface
-├── autocart_engine.py            # AutoCart logic engine
-├── moodcart_model.py             # NLP-based mood classifier
-├── mood_map.json                 # Maps mood to product categories
-├── walmart_api.py                # Product data fetcher (Walmart SerpAPI)
-├── user_history.json             # User shopping behavior history
-├── mood_history.json             # Mood logs
-├── requirements.txt              # Dependencies
-└── README.md                     # Project documentation
+├── main_app.py                 # Unified UI for MoodCart + AutoCart with theming
+├── mood_history.json           # Local cache of mood entries (also saved to MySQL if available)
+├── MOODCART/
+│   ├── app.py                  # Standalone MoodCart UI
+│   ├── mood_map.json           # Mood → category mapping
+│   └── moodcart_model.py       # Emotion classifier + TextBlob fallback
+├── AUTOCART/
+│   ├── app.py                  # Standalone AutoCart UI
+│   ├── autocart_engine.py      # Cart generation pipeline
+│   ├── autocart_rules.py       # Frequency, refill placeholder, category mapping
+│   ├── walmart_api.py          # Walmart search via SerpAPI
+│   └── user_history.json       # Sample past purchases per user
+├── requirements.txt
+└── README.md
 ```
+
+Key data files:
+- `MOODCART/mood_map.json` maps emotions (e.g., joy, sadness) to categories.
+- `AUTOCART/user_history.json` stores prior purchases used to rank and refill items.
+- `mood_history.json` locally persists mood interactions; MySQL persistence is optional.
 
 ---
 
+## Features
 
-## ⚙️ Installation & Usage
+- **Mood understanding**: Hugging Face emotion classifier (`bhadresh-savani/distilbert-base-uncased-emotion`) with a TextBlob sentiment fallback and direct keyword lookup.
+- **Personalized category adjustment**: age/interest/gender-aware category tweaks (e.g., toys → educational kits for kids).
+- **Product search**: SerpAPI Walmart search for real-time results with retry handling.
+- **Behavioral carting**: frequency-based item ranking, category tagging, and trending-product suggestions.
+- **History and insights**: optional MySQL storage plus local JSON cache, with a timeline view filtered by 7/30/all-time windows.
+- **Polished UI**: custom Walmart-inspired theming, dual tabs for MoodCart and AutoCart, and two-column product layouts.
 
-### 🔧 Setup
+---
 
+## Quickstart
+
+1) Clone and install
 ```bash
-git clone https://github.com/Shafia-01/FeelCart-ShopWhatYouFeel.git
-cd FeelCart-ShopWhatYouFeel
 pip install -r requirements.txt
 ```
 
-### 🔑 Configure SerpAPI Key
-
-- Get a free API key from [SerpAPI](https://serpapi.com/)
-- Set the API key in your environment:
-
+2) Set your SerpAPI key (required for both modules)
 ```bash
-export SERPAPI_KEY="your_api_key"
+export SERPAPI_KEY="your_api_key"   # PowerShell: $Env:SERPAPI_KEY="your_api_key"
 ```
 
-### ▶️ Run the Application
+3) (Optional) MySQL setup for mood history  
+Create a `moodcart_db` database with a `mood_history` table and user matching the hardcoded credentials in `main_app.py`/`MOODCART/app.py` (`root` / `Shafo@05`). If MySQL is unavailable, the app still runs using local `mood_history.json`.
 
+4) Run the combined experience
 ```bash
 streamlit run main_app.py
 ```
 
-You will be prompted to choose either:
-- **AutoCart** to auto-fill based on past behavior, or
-- **MoodCart** to receive mood-based recommendations.
+5) Or run modules individually
+```bash
+streamlit run MOODCART/app.py   # mood-based shopping
+streamlit run AUTOCART/app.py   # behavior-based carting
+```
 
 ---
 
-## 🧠 How Each Module Works
+## How it works
 
-### MoodCart
-1. User enters mood in plain text.
-2. NLP model classifies mood → maps it to product categories.
-3. Products are fetched using SerpAPI → shown to the user.
-4. Mood and timestamp are saved to the database for future insights.
+### MoodCart flow
+1. User enters free-form text about their mood.
+2. `predict_mood_category` classifies emotion (Hugging Face) or falls back to keyword/TextBlob.
+3. Mood is mapped to a category via `mood_map.json`, then adjusted using age, interest, and gender.
+4. A concise Walmart search term is built; SerpAPI fetches products with retry handling.
+5. Mood events are saved locally and (optionally) to MySQL, with a Plotly timeline for insights.
 
-### AutoCart
-1. Reads past purchases from `user_history.json` or database.
-2. Identifies frequently bought items or those due for refill.
-3. Fetches updated product data and auto-generates a personalized cart.
-
----
-
-## 📊 Mood Timeline Visualization
-
-MoodCart includes a timeline graph that visualizes your past moods, enabling:
-- Emotional shopping trend analysis
-- Mood-product correlation tracking
-- Smart insights for personalized experiences
+### AutoCart flow
+1. Past purchases load from `AUTOCART/user_history.json`.
+2. `get_top_n_items` ranks frequent items; `needs_refill` (currently a placeholder that always refills) decides inclusion.
+3. Each item is labeled with a coarse category via `CATEGORY_MAPPING`.
+4. SerpAPI pulls trending options per item; the top suggestion is attached to the generated cart.
 
 ---
 
-## 📌 Future Enhancements
+## Configuration reference
 
-- 🧾 Smart wishlist creation based on recurring items (AutoCart)
-- 💬 GPT-based mood extraction from longer text
-- 🛍️ Integration with Flipkart/Amazon APIs
-- 📲 Mobile-first UI with persistent logins
-- 🌱 Sustainability nudger based on emotion–impact mapping
-
----
-
-## 🙌 Team & Contributors
-
-- 👩‍💻 **Shafia Ameeruddin** — Core Developer & Designer
-
-_This project was developed for Sparkathon 2025 (Walmart) to promote sustainable, personalized shopping experiences._
+- **Environment**: `SERPAPI_KEY` must be set.
+- **Data**: `user_history.json` drives AutoCart; edit it to mirror your users.  
+  Example entry:
+  ```json
+  {
+    "user_001": [
+      {"item": "milk"}, {"item": "banana"}, {"item": "coffee"}
+    ]
+  }
+  ```
+- **MySQL**: credentials and DB/table names are defined in `get_db_connection()` inside the Streamlit apps.
 
 ---
 
-## 🤝 Contribution Guidelines
+## Known gaps & next steps
 
-Feel free to fork, improve, and open pull requests. Suggestions and feedback are always welcome.
-
----
-
-## 📃 License
-
-MIT License. See `LICENSE` file for details.
+- `needs_refill` is stubbed to always return `True`; add real refill logic based on recency or quantity.
+- Credentials are hardcoded in code for demo purposes; move them to `.env` in production.
+- SerpAPI errors are surfaced in the UI; consider broader rate-limit backoff and logging.
+- Add tests around mood mapping, refill logic, and SerpAPI parsing as the logic evolves.
 
 ---
 
-> ✨ *"FeelCart brings emotion and efficiency together — shopping that truly understands you."* ✨
+## License
+
+MIT License. See `LICENSE` for details.
