@@ -295,5 +295,32 @@
         "interest": "Technology",
         "age": 33,
         "gender": "Female"
+    },
+    {
+        "timestamp": "2026-06-15 17:42:44",
+        "mood": "sadness",
+        "category": "books",
+        "adjusted_category": "inspirational books",
+        "interest": "Home Decor",
+        "age": 21,
+        "gender": "Female"
+    },
+    {
+        "timestamp": "2026-06-15 17:45:03",
+        "mood": "grateful",
+        "category": "thank-you gifts",
+        "adjusted_category": "thank-you gifts for home decor",
+        "interest": "Home Decor",
+        "age": 21,
+        "gender": "Female"
+    },
+    {
+        "timestamp": "2026-06-15 17:46:01",
+        "mood": "boredom",
+        "category": "games",
+        "adjusted_category": "strategy board games for adults",
+        "interest": "Home Decor",
+        "age": 21,
+        "gender": "Female"
     }
 ]
