@@ -331,5 +331,23 @@
         "interest": "Fashion",
         "age": 25,
         "gender": "Female"
+    },
+    {
+        "timestamp": "2026-06-15 18:12:35",
+        "mood": "boredom",
+        "category": "games",
+        "adjusted_category": "strategy board games for adults",
+        "interest": "Technology",
+        "age": 28,
+        "gender": "Male"
+    },
+    {
+        "timestamp": "2026-06-15 18:15:16",
+        "mood": "happiness",
+        "category": "party supplies",
+        "adjusted_category": "party supplies for fashion",
+        "interest": "Fashion",
+        "age": 21,
+        "gender": "Female"
     }
 ]

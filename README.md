@@ -266,10 +266,17 @@ To deploy the **Walmart Innovation Suite** (Streamlit app):
 ---
 
 ## Screenshots
+### MoodCart Tab
+![Moodcart tab](assets/FeelCart%20(1).png)
+![Moodcart results](assets/FeelCart%20(2).png)
 
-<!-- Add screenshot of MoodCart tab here -->
-<!-- Add screenshot of AutoCart tab here -->
-<!-- Add screenshot of mood timeline chart here -->
+### Mood Timeline Chart
+![Mood Timeline Chart](assets/FeelCart%20(6).png)
+
+### AutoCart Tab
+![AutoCart Tab](assets/FeelCart%20(5).png)
+![AutoCart results](assets/FeelCart%20(3).png)
+![AutoCart](assets/FeelCart%20(4).png)
 
 ---
 
@@ -328,4 +335,4 @@ If you would like to contribute:
 ---
 
 ## License
-MIT License
+This project is licensed under the MIT License - see the LICENSE file for details.
