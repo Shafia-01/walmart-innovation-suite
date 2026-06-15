@@ -1,7 +1,8 @@
 import streamlit as st
 import json
-from walmart_api import fetch_trending_products
-from autocart_engine import generate_autocart
+from pathlib import Path
+from AUTOCART.walmart_api import fetch_trending_products
+from AUTOCART.autocart_engine import generate_autocart
 
 st.set_page_config(page_title="AutoCart", page_icon="🛒", layout="centered")
 st.title("🛒 AutoCart Smart Shopping Assistant")
@@ -28,7 +29,7 @@ if st.button("Search"):
 
 # --- LOAD USER DATA ---
 try:
-    with open("user_history.json", "r") as f:
+    with open(Path(__file__).parent / "user_history.json", "r") as f:
         user_data = json.load(f)
 except FileNotFoundError:
     st.error("❌ user_history.json not found!")
