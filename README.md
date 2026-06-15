@@ -12,7 +12,6 @@ Both modules can run on their own or through the combined `main_app.py` experien
 ---
 
 ## Why This Project Exists
-
 Traditional e-commerce platforms rely heavily on search queries and generic recommendations, often ignoring a customer's current emotional state or their underlying shopping habits. This can lead to decision fatigue. The **Walmart Innovation Suite** (via **FeelCart**) aims to solve this by introducing:
 1. **Emotional Personalization**: Translating emotional states into relevant product categories.
 2. **Habit-Based Automation**: Analyzing past behavior to predict when items need replenishment, reducing cognitive load.
@@ -20,7 +19,6 @@ Traditional e-commerce platforms rely heavily on search queries and generic reco
 ---
 
 ## Key Features
-
 - **Mood Detection with Fallback Chain**: Evaluates user emotions using a layered approach: direct keyword matching, a HuggingFace DistilBert classifier, and a TextBlob polarity fallback.
 - **Age/Interest/Gender-Based Category Adjustment**: Adapts product categories dynamically based on demographic heuristics (e.g., matching "toys" to "educational toys for kids" for children or "collectibles or hobby kits for adults" for adults).
 - **SerpAPI Product Search with Retry**: Queries real-time Walmart search results using SerpAPI, featuring custom rate-limit handling and automatic retries.
@@ -30,7 +28,6 @@ Traditional e-commerce platforms rely heavily on search queries and generic reco
 ---
 
 ## Architecture
-
 The **Walmart Innovation Suite** provides three Streamlit entry points:
 1. `main_app.py` (Combined): A unified portal housing both MoodCart and AutoCart under a tabbed, Walmart-themed interface.
 2. `MOODCART/app.py` (Standalone): A standalone interface focused entirely on the mood-based discovery flow.
@@ -73,7 +70,6 @@ graph TD
 ---
 
 ## Tech Stack
-
 - **Streamlit (v1.33.0)**: Used as the core framework for building clean, interactive web interfaces.
 - **pandas (v2.2.1)**: Powers data manipulation, history analysis, and structure building for visualization.
 - **plotly (v5.21.0)**: Generates the interactive mood history timeline charts.
@@ -88,7 +84,6 @@ graph TD
 ---
 
 ## Engineering Decisions
-
 ### 1. Robust Sentiment Fallback Chain
 Due to the computational overhead and potential networking or startup issues with machine learning models, FeelCart implements a 3-tier fallback chain:
 1. **Direct Keyword Lookup**: Fast regex search against explicit emotions listed in `mood_map.json`.
@@ -101,7 +96,6 @@ To prevent recommending children's toys to adults or adult collectibles to kids,
 ---
 
 ## AI Components
-
 ### Emotion Classification
 - **Model**: `bhadresh-savani/distilbert-base-uncased-emotion`
 - **Fallback**: TextBlob polarity-based categorization.
@@ -128,7 +122,6 @@ The primary lookup table maps specific input emotions to initial search categori
 ---
 
 ## Database Design
-
 FeelCart supports optional persistent database storage for mood history logs.
 
 ```sql
@@ -150,7 +143,6 @@ If database connection environment variables are not supplied or fail to connect
 ---
 
 ## User Flow
-
 ### 🧠 MoodCart Tab
 1. **Personalization Sidebar**: The user inputs their age, selects an interest (e.g., Technology, Gaming), and chooses their gender.
 2. **Text Input**: The user describes their mood (e.g., "I feel extremely tired and anxious").
@@ -173,7 +165,6 @@ If database connection environment variables are not supplied or fail to connect
 ---
 
 ## Folder Structure
-
 ```
 walmart-innovation-suite/
 ├── .env.example                # Sample environment configuration file
@@ -200,7 +191,6 @@ walmart-innovation-suite/
 ---
 
 ## Installation Guide
-
 1. **Clone the Repository** and navigate to the root directory.
 2. **Install Dependencies**:
    ```bash
@@ -214,7 +204,6 @@ walmart-innovation-suite/
 ---
 
 ## Environment Variables
-
 Copy `.env.example` to a new file named `.env` and fill in the values:
 
 ```ini
@@ -231,7 +220,6 @@ MOODCART_DB_NAME=your_mysql_database_name_here
 ---
 
 ## Running The Project
-
 Ensure you are inside the root directory `walmart-innovation-suite/`.
 
 ### 1. Running the Integrated Experience (Recommended)
@@ -270,7 +258,6 @@ To run the standalone components individually:
 ---
 
 ## Deployment Guide
-
 To deploy the **Walmart Innovation Suite** (Streamlit app):
 1. **Environment Variables**: Configure the system variables (e.g. `SERPAPI_KEY`, `MOODCART_DB_HOST`, etc.) inside your hosting provider's Secrets configuration panel.
 2. **Database Integration**: Ensure your target MySQL database is reachable by your hosting environment, or rely entirely on the automatic local file (`mood_history.json`) fallback.
@@ -287,7 +274,6 @@ To deploy the **Walmart Innovation Suite** (Streamlit app):
 ---
 
 ## Performance Considerations
-
 - **API Caching**: All product lookups are cached locally using Streamlit's `@st.cache_data(ttl=3600)` decorator to save API quota and accelerate repeat queries.
 - **SerpAPI Retry Handling**: To handle API rate limits, the request client uses retry loops (`fetch_products_with_retry`) backstaged by delay buffers when encountering `429 Too Many Requests` responses.
 - **Lazy Model Loading**: The ML pipeline classifier is loaded lazily via a module-level singleton (`get_emotion_classifier()`) to ensure fast application startup times.
@@ -295,7 +281,6 @@ To deploy the **Walmart Innovation Suite** (Streamlit app):
 ---
 
 ## Security Considerations
-
 - **Secure Credentials**: All authorization keys and database parameters have been removed from the source code and are managed exclusively via environment variables loaded by `python-dotenv`.
 - **Git Protection**: The local `.env` configuration file is gitignored to prevent credentials from leaking into public code repositories.
 - **Safe SerpAPI Client**: All search inputs are normalized and escaped before transmission to SerpAPI.
@@ -303,7 +288,6 @@ To deploy the **Walmart Innovation Suite** (Streamlit app):
 ---
 
 ## Challenges Solved
-
 - **Rate-Limit Resilience**: Solved random connection drops and rate limits in SerpAPI calls through structured retry routines and memory caching.
 - **Model Size vs. Performance**: Leveraged a multi-tiered fallback architecture to bypass loading heavy machine-learning classifiers if environment resources are constrained.
 - **Unified Pathing**: Handled nested import and resource-path issues across standalone and integrated entry points using absolute parent path resolvers (`Path(__file__).parent`).
@@ -321,14 +305,12 @@ To deploy the **Walmart Innovation Suite** (Streamlit app):
 ---
 
 ## Lessons Learned
-
 - **Multi-tiered redundancy is key**: Developing local lexicon-based checks alongside transformer models ensures high application availability and minimizes API dependency.
 - **Path structure awareness**: Building relative directories based on `Path(__file__)` rather than OS-dependent string concatenation prevents execution errors across different environments.
 
 ---
 
 ## Resume Highlights
-
 - **Prototype Scale**: Developed a modular e-commerce personalizer featuring three runtime entry points, complex demographic filtering, and dual-layer local/database persistence.
 - **Machine Learning Integration**: Designed and deployed a multi-stage classification pipeline running HuggingFace DistilBert transformers with TextBlob lexicon-based fallbacks.
 - **API and Database Architecture**: Structured external data querying via SerpAPI with custom rate-limiting retry policies, combined with an optional relational MySQL database logger.
@@ -336,7 +318,6 @@ To deploy the **Walmart Innovation Suite** (Streamlit app):
 ---
 
 ## Contribution Guidelines
-
 If you would like to contribute:
 1. **Fork** the repository.
 2. Create a new **feature branch** (`git checkout -b feature/NewFeature`).
@@ -347,5 +328,4 @@ If you would like to contribute:
 ---
 
 ## License
-
-No separate `LICENSE` file currently exists in the root repository. The project is intended to be open-source and run under the standard MIT License conditions.
+MIT License
