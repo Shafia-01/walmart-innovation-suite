@@ -6,6 +6,7 @@ import json
 import pandas as pd
 import plotly.express as px
 import mysql.connector
+import time
 from moodcart_model import predict_mood_category
 from datetime import datetime, timedelta
 from pathlib import Path
