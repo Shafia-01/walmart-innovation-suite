@@ -9,15 +9,17 @@ import mysql.connector
 from moodcart_model import predict_mood_category
 from datetime import datetime, timedelta
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
 
 nest_asyncio.apply()
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Shafo@05",
-        database="moodcart_db"
+        host=os.getenv("MOODCART_DB_HOST", "localhost"),
+        user=os.getenv("MOODCART_DB_USER", "root"),
+        password=os.getenv("MOODCART_DB_PASSWORD", "Shafo@05"),
+        database=os.getenv("MOODCART_DB_NAME", "moodcart_db")
     )
 
 def load_mood_history(user_id="user_001"):
@@ -39,7 +41,7 @@ def load_mood_history(user_id="user_001"):
         st.error(f"❌ Failed to load mood history: {e}")
         return []
 
-mood_file = Path("mood_history.json")
+mood_file = Path(__file__).parent.parent / "mood_history.json"
 if "mood_memory" not in st.session_state:
     if mood_file.exists():
         with mood_file.open("r") as f:
@@ -88,11 +90,9 @@ def build_search_term(category, interest):
             filtered.append(word)
     return " ".join(filtered[:3])
 
-@st.cache_data(ttl=3600)
-def fetch_products(search_query):
+def _fetch_products_raw(search_query):
     if not SERPAPI_KEY:
-        st.error("SerpApi key is missing!")
-        return []
+        raise ValueError("SerpApi key is missing!")
 
     params = {
         "engine": "walmart",
@@ -103,13 +103,14 @@ def fetch_products(search_query):
 
     try:
         response = requests.get("https://serpapi.com/search", params=params, timeout=60)
+        if response.status_code == 429:
+            raise requests.exceptions.HTTPError("429 Too Many Requests", response=response)
         response.raise_for_status()
         results = response.json()
 
         raw_items = results.get("shopping_results", []) or results.get("organic_results", [])
 
         if not raw_items:
-            st.warning(f"No products found for: {search_query}")
             return []
 
         products = []
@@ -117,7 +118,6 @@ def fetch_products(search_query):
             name = item.get("title") or item.get("name") or "No title"
             link = item.get("link") or item.get("product_link") or item.get("url") or "#"
             image = item.get("thumbnail") or item.get("image") or None
-
 
             if not link.startswith("http"):
                 link = "https://www.walmart.com" + link
@@ -130,12 +130,50 @@ def fetch_products(search_query):
 
         return products
 
+    except requests.exceptions.HTTPError as e:
+        if e.response is not None and e.response.status_code == 429:
+            raise e
+        if "429" in str(e):
+            raise e
+        st.error(f"Network error: {e}")
+        return []
     except requests.exceptions.RequestException as e:
+        if e.response is not None and e.response.status_code == 429:
+            raise requests.exceptions.HTTPError("429 Too Many Requests", response=e.response)
+        if "429" in str(e):
+            raise requests.exceptions.HTTPError("429 Too Many Requests", response=e.response)
         st.error(f"Network error: {e}")
         return []
     except Exception as e:
         st.error(f"Unexpected error: {e}")
         return []
+
+@st.cache_data(ttl=3600)
+def fetch_products(search_query):
+    products = _fetch_products_raw(search_query)
+    if not products:
+        raise ValueError("No products found")
+    return products
+
+def fetch_products_with_retry(query, serpapi_key=SERPAPI_KEY, max_retries=2, delay=3):
+    for attempt in range(max_retries):
+        try:
+            products = fetch_products(query)
+            return products
+        except requests.exceptions.HTTPError as e:
+            if (e.response is not None and e.response.status_code == 429) or "429" in str(e):
+                st.warning(f"Rate limit hit. Retry {attempt + 1} of {max_retries}")
+                time.sleep(delay)
+            else:
+                return []
+        except ValueError as e:
+            if str(e) == "SerpApi key is missing!":
+                st.error("SerpApi key is missing!")
+            return []
+        except Exception as e:
+            st.error(f"Unexpected error: {e}")
+            return []
+    return []
 
 st.title("🛒 MoodCart: Shopping by Mood")
 st.sidebar.header("Personalize Your Recommendations")
@@ -162,7 +200,7 @@ user_text = st.text_area("Tell us how you feel today:", placeholder="e.g., I'm f
 
 if st.button("Get Recommendations"):
     if user_text.strip():
-        mood, initial_category, confidence = predict_mood_category(user_text)
+        mood, _, confidence = predict_mood_category(user_text)
         BASE_DIR = Path(__file__).parent.resolve()
         MOOD_MAP_PATH = BASE_DIR / "mood_map.json"
         with open(MOOD_MAP_PATH, "r") as f:
@@ -255,6 +293,19 @@ if st.button("Get Recommendations"):
                 else:
                     return "unisex fashion"
                 
+            elif category == "games":
+                return "educational games for kids" if age_group == "child" else (
+                    "party board games for teens" if age_group == "teen" else "strategy board games for adults"
+                )
+            elif category == "boxing gloves":
+                if age < 18:
+                    return "boxing gloves for youth"
+                elif gender == "Female":
+                    return "boxing gloves for women"
+                elif gender == "Male":
+                    return "boxing gloves for men"
+                else:
+                    return "unisex boxing gloves"
             elif category == "romantic gifts":
                 return "romantic gifts for couples" if gender != "Prefer not to say" else category
 
@@ -348,12 +399,12 @@ if st.button("Get Recommendations"):
 
         st.write(f"🔎 Search query being used: '{search_term}'")
 
-        products = fetch_products(search_term)
+        products = fetch_products_with_retry(search_term)
 
         if not products:
             st.warning(f"No products found for: '{search_term}'. Trying fallback with interest only...")
             fallback_search = interest
-            products = fetch_products(fallback_search)
+            products = fetch_products_with_retry(fallback_search)
             if not products:
                 st.error("Still no products found. Try another mood or check your API quota.")
         
@@ -374,6 +425,5 @@ if st.button("Get Recommendations"):
         st.warning("Please enter some text describing your mood.")
         
 if st.session_state.get("mood_memory"):
-    mood_file = Path("mood_history.json")
     with mood_file.open("w") as f:
         json.dump(st.session_state.mood_memory, f, indent=4)
