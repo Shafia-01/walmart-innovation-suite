@@ -221,10 +221,10 @@ st.markdown(
 # --- Database Connection ---
 def get_db_connection():
     return mysql.connector.connect(
-        host=os.getenv("MOODCART_DB_HOST", "localhost"),
-        user=os.getenv("MOODCART_DB_USER", "root"),
-        password=os.getenv("MOODCART_DB_PASSWORD", "Shafo@05"),
-        database=os.getenv("MOODCART_DB_NAME", "moodcart_db")
+        host=os.getenv("MOODCART_DB_HOST"),
+        user=os.getenv("MOODCART_DB_USER"),
+        password=os.getenv("MOODCART_DB_PASSWORD"),
+        database=os.getenv("MOODCART_DB_NAME")
     )
 
 # --- Load Mood History ---
