@@ -1,8 +1,20 @@
+<div align="center">
+
 # CartVerse
 ## *Walmart Innovation Suite*
 
-> **About this project:** **CartVerse** (part of the **Walmart Innovation Suite**) is an advanced retail prototype built for **Walmart Sparkathon 2025** (Walmart's annual hackathon). It showcases next-generation personalized shopping experiences.
+[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)](https://streamlit.io/)
+[![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![Plotly](https://img.shields.io/badge/Plotly-%233F4F75.svg?style=for-the-badge&logo=plotly&logoColor=white)](https://plotly.com/)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-FFD21E?style=for-the-badge)](https://huggingface.co/)
+[![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 
+An advanced retail prototype built for **Walmart Sparkathon 2025** (Walmart's annual hackathon). It showcases next-generation personalized shopping experiences.
+
+</div>
+
+## About this project: 
 **CartVerse** is a Streamlit-powered shopping assistant that personalizes Walmart product discovery in two ways:
 - 🧠 **MoodCart**: Turns what you feel into product categories and recommends items that fit your mood.
 - 🤖 **AutoCart**: Mines past shopping behavior to suggest refills and trending alternatives automatically.
