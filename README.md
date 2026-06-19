@@ -1,9 +1,9 @@
-# Walmart Innovation Suite
-## *FeelCart – Shop What You Feel*
+# CartVerse
+## *Walmart Innovation Suite*
 
-> **About this project:** The **Walmart Innovation Suite** is an advanced retail prototype built for **Walmart Sparkathon 2025** (Walmart's annual hackathon). It showcases next-generation personalized shopping experiences.
+> **About this project:** **CartVerse** (part of the **Walmart Innovation Suite**) is an advanced retail prototype built for **Walmart Sparkathon 2025** (Walmart's annual hackathon). It showcases next-generation personalized shopping experiences.
 
-FeelCart is a Streamlit-powered shopping assistant that personalizes Walmart product discovery in two ways:
+**CartVerse** is a Streamlit-powered shopping assistant that personalizes Walmart product discovery in two ways:
 - 🧠 **MoodCart**: Turns what you feel into product categories and recommends items that fit your mood.
 - 🤖 **AutoCart**: Mines past shopping behavior to suggest refills and trending alternatives automatically.
 
@@ -12,7 +12,7 @@ Both modules can run on their own or through the combined `main_app.py` experien
 ---
 
 ## Why This Project Exists
-Traditional e-commerce platforms rely heavily on search queries and generic recommendations, often ignoring a customer's current emotional state or their underlying shopping habits. This can lead to decision fatigue. The **Walmart Innovation Suite** (via **FeelCart**) aims to solve this by introducing:
+Traditional e-commerce platforms rely heavily on search queries and generic recommendations, often ignoring a customer's current emotional state or their underlying shopping habits. This can lead to decision fatigue. **CartVerse** (via the **Walmart Innovation Suite**) aims to solve this by introducing:
 1. **Emotional Personalization**: Translating emotional states into relevant product categories.
 2. **Habit-Based Automation**: Analyzing past behavior to predict when items need replenishment, reducing cognitive load.
 
@@ -28,7 +28,7 @@ Traditional e-commerce platforms rely heavily on search queries and generic reco
 ---
 
 ## Architecture
-The **Walmart Innovation Suite** provides three Streamlit entry points:
+**CartVerse** (the **Walmart Innovation Suite**) provides three Streamlit entry points:
 1. `main_app.py` (Combined): A unified portal housing both MoodCart and AutoCart under a tabbed, Walmart-themed interface.
 2. `MOODCART/app.py` (Standalone): A standalone interface focused entirely on the mood-based discovery flow.
 3. `AUTOCART/app.py` (Standalone): A standalone interface focused entirely on past purchase history analysis and product replenishment.
@@ -85,7 +85,7 @@ graph TD
 
 ## Engineering Decisions
 ### 1. Robust Sentiment Fallback Chain
-Due to the computational overhead and potential networking or startup issues with machine learning models, FeelCart implements a 3-tier fallback chain:
+Due to the computational overhead and potential networking or startup issues with machine learning models, **CartVerse** implements a 3-tier fallback chain:
 1. **Direct Keyword Lookup**: Fast regex search against explicit emotions listed in `mood_map.json`.
 2. **HuggingFace Pipeline**: A pre-trained `distilbert-base-uncased-emotion` model for semantic classification.
 3. **TextBlob Polarity**: A local, rules-based sentiment calculation that infers generic joy, sadness, or neutral states if the ML pipeline fails.
@@ -122,7 +122,7 @@ The primary lookup table maps specific input emotions to initial search categori
 ---
 
 ## Database Design
-FeelCart supports optional persistent database storage for mood history logs.
+**CartVerse** supports optional persistent database storage for mood history logs.
 
 ```sql
 CREATE TABLE IF NOT EXISTS mood_history (
@@ -166,7 +166,7 @@ If database connection environment variables are not supplied or fail to connect
 
 ## Folder Structure
 ```
-walmart-innovation-suite/
+CartVerse/
 ├── .env.example                # Sample environment configuration file
 ├── .gitignore                  # Git untracked file settings
 ├── mood_history.json           # Local JSON fallback cache for mood inputs
@@ -220,7 +220,7 @@ MOODCART_DB_NAME=your_mysql_database_name_here
 ---
 
 ## Running The Project
-Ensure you are inside the root directory `walmart-innovation-suite/`.
+Ensure you are inside the root directory `CartVerse/`.
 
 ### 1. Running the Integrated Experience (Recommended)
 This runs the full suite containing both tabs:
@@ -258,7 +258,7 @@ To run the standalone components individually:
 ---
 
 ## Deployment Guide
-To deploy the **Walmart Innovation Suite** (Streamlit app):
+To deploy **CartVerse** (Streamlit app):
 1. **Environment Variables**: Configure the system variables (e.g. `SERPAPI_KEY`, `MOODCART_DB_HOST`, etc.) inside your hosting provider's Secrets configuration panel.
 2. **Database Integration**: Ensure your target MySQL database is reachable by your hosting environment, or rely entirely on the automatic local file (`mood_history.json`) fallback.
 3. **HuggingFace Pipeline**: Ensure the hosting environment has adequate memory allocations to download and cache the `distilbert-base-uncased-emotion` model upon initialization.

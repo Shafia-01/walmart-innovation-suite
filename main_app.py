@@ -17,7 +17,7 @@ load_dotenv()
 
 nest_asyncio.apply()
 st.set_page_config(
-    page_title="FeelCart: Shop What You Feel",
+    page_title="CartVerse: Walmart Innovation Suite",
     page_icon="🛍️",
     layout="centered"
 )
@@ -209,12 +209,12 @@ section[data-testid="stTabbedContent"] > div {
 
 st.markdown("""
 <div style='text-align: center; font-size: 42px; font-weight: bold; color: #001F5B; font-family: Cambria, serif;'>
-🛍️ FeelCart: Shop What You Feel
+🛍️ CartVerse
 </div>
 """, unsafe_allow_html=True)
 
 st.markdown(
-    "<p style='text-align: center; font-style: italic; font-weight: bold; color: #0071CE; font-size: 18px;'>A smart assistant that understands your mood and shopping needs - in real time.</p>",
+    "<p style='text-align: center; font-style: italic; font-weight: bold; color: #0071CE; font-size: 18px;'>Walmart Innovation Suite</p>",
     unsafe_allow_html=True
 )
 
@@ -690,7 +690,7 @@ st.markdown(
     <hr style="border-top: 1px solid #ccc;">
     <center>
         <span style="color: #0071CE;">Inspired by Walmart</span> | 
-        <span style="color: #FFC220;">FeelCart</span> © 2025
+        <span style="color: #FFC220;">CartVerse</span> © 2025
     </center>
     """,
     unsafe_allow_html=True
